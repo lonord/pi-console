@@ -1,0 +1,19 @@
+{
+  "name": "pi-console-server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "bin/main",
+  "scripts": {
+    "start": "./bin/main",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "raspiberrypi"
+  ],
+  "author": "lonord",
+  "license": "MIT",
+  "dependencies": {
+    "pty.js": "*",
+    "serialport": "4.0.3"
+  }
+}

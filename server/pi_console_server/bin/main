@@ -1,0 +1,92 @@
+#!/usr/bin/env node
+'use strict';
+
+require('./category.js');
+
+const BasicSubHandler = require('./handlers.js').BasicSubHandler;
+const PtyHandler = require('./handlers.js').PtyHandler;
+const SysInfoHandler = require('./handlers.js').SysInfoHandler;
+const TimeHandler = require('./handlers.js').TimeHandler;
+const UartHandler = require('./handlers.js').UartHandler;
+const DataPack = require('./util.js').DataPack;
+
+/**
+ * main:
+ */
+(() => {
+    console.log('*** Pi Console Server starting...');
+    let uartHandler = new UartHandler();
+    uartHandler.setDataPackReceiver(uartReceiver);
+    uartHandler.deviceConnectListener = onBTDeviceConnect;
+    uartHandler.deviceDisconnectListener = onBTDeviceDisconnect;
+    let subHandlers = [];
+
+    // *** Add Handlers Here ***
+    for (let i = 0; i < 3; i++) {
+        let handler = new PtyHandler(i + 1);
+        subHandlers.push(handler);
+    }
+    subHandlers.push(new SysInfoHandler());
+    subHandlers.push(new TimeHandler());
+    // ****** Handlers end *****
+
+    subHandlers.forEach((handler) => {
+        handler.setDataPackReceiver(subReceiver);
+    });
+
+    process.on('SIGINT', processExit);
+    process.on('SIGTERM', processExit);
+
+    function uartReceiver(data) {
+        subHandlers.forEach((handler) => {
+            let accepts = handler.acceptDataPackTags();
+            if ((typeof accepts) === 'number') {
+                if (accepts == data.tag) {
+                    handler.putDataPack(data);
+                }
+            }
+            else if (accepts instanceof Array) {
+                for (let i = 0; i < accepts.length; i++) {
+                    if (accepts[i] == data.tag) {
+                        handler.putDataPack(data);
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    function subReceiver(data) {
+        return uartHandler.putDataPack(data);
+    }
+
+    function onBTDeviceConnect(needSendPrompt) {
+        for (let i = 0; i < subHandlers.length; i++) {
+            let sub = subHandlers[i];
+            if (sub instanceof BasicSubHandler) {
+                sub.deviceConnected();
+            }
+        }
+    }
+
+    function onBTDeviceDisconnect() {
+        for (let i = 0; i < subHandlers.length; i++) {
+            let sub = subHandlers[i];
+            if (sub instanceof BasicSubHandler) {
+                sub.deviceDisconnected();
+            }
+        }
+    }
+
+    function processExit() {
+        uartHandler.exit();
+        subHandlers.forEach((handler) => {
+            handler.exit();
+        });
+        console.log('*** Pi Console Server is going to exit...');
+        setTimeout(function() {
+            process.exit(0);
+        }, 500);
+    }
+
+})();
