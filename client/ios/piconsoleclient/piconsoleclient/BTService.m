@@ -69,8 +69,8 @@
     }
     unsigned char head[3];
     head[0] = package.tag;
-    head[1] = package.len / 256;
-    head[2] = package.len % 256;
+    head[1] = (unsigned char) (package.len / 256);
+    head[2] = (unsigned char) (package.len % 256);
     NSMutableData *sendData = [[NSMutableData alloc] initWithCapacity:3];
     [sendData appendBytes:head length:3];
     [sendData appendData:package.data];

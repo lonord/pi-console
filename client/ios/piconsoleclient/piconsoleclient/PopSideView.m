@@ -109,9 +109,18 @@
     [actionCellArray addObject:@{@"cell": cellPaste, @"tag": @"paste"}];
     
     [sectionArray addObject:actionCellArray];
-    
-    //************************** action ******************************
-    
+
+    //************************* pi action *****************************
+
+    NSMutableArray* piActionCellArray = [[NSMutableArray alloc] init];
+
+    UITableViewCell* cellPower = [[UITableViewCell alloc] init];
+    cellPower.textLabel.text = @"关机...";
+    cellPower.textLabel.textColor = [UIColor redColor];
+    [piActionCellArray addObject:@{@"cell": cellPower, @"tag": @"power"}];
+
+    [sectionArray addObject:piActionCellArray];
+
     //************************** sys ******************************
     
     NSMutableArray* sysCellArray = [[NSMutableArray alloc] init];
@@ -127,8 +136,6 @@
     [sysCellArray addObject:@{@"cell": cellDisconn, @"tag": @"disconnect"}];
     
     [sectionArray addObject:sysCellArray];
-    
-    //************************** sys ******************************
 }
 
 - (void)resizeSubViews:(CGSize)mainViewSize {

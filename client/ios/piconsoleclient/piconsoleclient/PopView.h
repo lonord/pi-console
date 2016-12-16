@@ -55,3 +55,9 @@
 + (void)showWithText:(NSString*)text callback:(void(^)(BOOL isOK))cb;
 
 @end
+
+@interface PopPowerView : UIView
+
++ (void)showWithCallback:(void(^)(int position))cb;
+
+@end

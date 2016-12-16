@@ -13,6 +13,7 @@
 #import "StatusView.h"
 #import "SysInfoItem.h"
 #import "DateHandler.h"
+#import "PowerHandler.h"
 
 #define KEYBOARD_MAX_HEIGHT 240.0
 
@@ -26,8 +27,6 @@
 @end
 
 @implementation ViewController {
-    BTService* btService;
-    
     UIView* mainView;
     PopTextView* popTextView;
     PopSelectView* popSelectView;
@@ -37,9 +36,11 @@
     XTermView* xTermView3;
     UIView<KeyboardViewDelegate>* keyboardView;
     StatusView* statusBar;
-    
+
+    BTService* btService;
     NSMutableArray* packageHandlerArray;
     int activeXTermNum;
+    PowerHandler* powerHandler;
 }
 
 - (void)viewDidLoad {
@@ -157,6 +158,9 @@
     [packageHandlerArray addObject:sysInfoItem];
     
     [packageHandlerArray addObject:[[DateHandler alloc] init]];
+
+    powerHandler = [[PowerHandler alloc] init];
+    [packageHandlerArray addObject:powerHandler];
     
     // ****** Handlers end *****
     
@@ -170,9 +174,8 @@
 }
 
 - (void)dealWithBTPackage:(BTPackage*)package {
-    NSString* str = [[NSString alloc] initWithData:package.data encoding:NSUTF8StringEncoding];
     for (id<DataPackHandlerDelegate> handler in packageHandlerArray) {
-        if ([handler acceptTag:package.tag]) {
+        if ([handler acceptTag:package.tag] && [handler respondsToSelector:@selector(putData:data:)]) {
             [handler putData:package.tag data:package.data];
         }
     }
@@ -331,6 +334,16 @@
         else {
             doPaste(YES);
         }
+    }
+    else if ([identifier isEqualToString:@"power"]) {
+        [PopPowerView showWithCallback:^(int position) {
+            if (position == 0) {
+                [powerHandler sendShutdownCmd];
+            }
+            else if (position == 1) {
+                [powerHandler sendRestartCmd];
+            }
+        }];
     }
 }
 

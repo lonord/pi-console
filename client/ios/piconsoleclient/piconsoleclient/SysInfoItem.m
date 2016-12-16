@@ -14,18 +14,20 @@
 #define FONT_SIZE 10.0
 #define CPU_TITLE @"CPU:"
 #define MEM_TITLE @"MEM:"
+#define BATT_TITLE @"BATT:"
 
 #define TAG 0xA1
 
 @implementation SysInfoItem {
     UIView* cpuView;
     UIView* memView;
-    UIView* tempView;
+    UIView* battView;
     UILabel* labelCpuTitle;
     UILabel* labelCpuVal;
     UILabel* labelMemTitle;
     UILabel* labelMemVal;
-    UILabel* labelTempVal;
+    UILabel* labelBattTitle;
+    UILabel* labelBattVal;
 }
 
 - (id)initWithHeight:(CGFloat)height {
@@ -71,21 +73,27 @@
         
         memView.frame = CGRectMake(cpuView.frame.origin.x + cpuView.frame.size.width + MARGIN_H, MARGIN_V, labelMemTitle.frame.size.width + labelMemVal.frame.size.width + MARGIN_H * 2, height - MARGIN_V * 2);
         
-        tempView = [[UIView alloc] init];
-        tempView.layer.borderWidth = 0.5;
-        tempView.layer.borderColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
-        [self addSubview:tempView];
+        battView = [[UIView alloc] init];
+        battView.layer.borderWidth = 0.5;
+        battView.layer.borderColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
+        [self addSubview:battView];
         
-        labelTempVal = [[UILabel alloc] initWithFrame:CGRectMake(MARGIN_H, 0, [ViewUtil calculateSizeByConstraintFontSize:FONT_SIZE string:@"100℃"].width + 0.5, height - MARGIN_V * 2)];
-        labelTempVal.font = [UIFont systemFontOfSize:FONT_SIZE];
-        labelTempVal.text = @"---℃";
-        labelTempVal.textAlignment = NSTextAlignmentRight;
-        labelTempVal.textColor = [UIColor whiteColor];
-        [tempView addSubview:labelTempVal];
+        labelBattTitle = [[UILabel alloc] initWithFrame:CGRectMake(MARGIN_H, 0, [ViewUtil calculateSizeByConstraintFontSize:FONT_SIZE string:BATT_TITLE].width, height - MARGIN_V * 2)];
+        labelBattTitle.font = [UIFont systemFontOfSize:FONT_SIZE];
+        labelBattTitle.text = BATT_TITLE;
+        labelBattTitle.textColor = [UIColor colorWithWhite:0.8 alpha:1];
+        [battView addSubview:labelBattTitle];
         
-        tempView.frame = CGRectMake(memView.frame.origin.x + memView.frame.size.width + MARGIN_H, MARGIN_V, labelTempVal.frame.size.width + MARGIN_H * 2, height - MARGIN_V * 2);
+        labelBattVal = [[UILabel alloc] initWithFrame:CGRectMake(labelBattTitle.frame.origin.x + labelBattTitle.frame.size.width, 0, [ViewUtil calculateSizeByConstraintFontSize:FONT_SIZE string:@"100%"].width + 0.5, height - MARGIN_V * 2)];
+        labelBattVal.font = [UIFont systemFontOfSize:FONT_SIZE];
+        labelBattVal.text = @"---%";
+        labelBattVal.textAlignment = NSTextAlignmentRight;
+        labelBattVal.textColor = [UIColor whiteColor];
+        [battView addSubview:labelBattVal];
         
-        self.frame = CGRectMake(0, 0, tempView.frame.origin.x + tempView.frame.size.width + MARGIN_H, height);
+        battView.frame = CGRectMake(memView.frame.origin.x + memView.frame.size.width + MARGIN_H, MARGIN_V, labelBattTitle.frame.size.width + labelBattVal.frame.size.width + MARGIN_H * 2, height - MARGIN_V * 2);
+        
+        self.frame = CGRectMake(0, 0, battView.frame.origin.x + battView.frame.size.width + MARGIN_H, height);
     }
     return self;
 }
@@ -100,10 +108,15 @@
     }
     int cpu = bytes[0] * 256 + bytes[1];
     int mem = bytes[2];
-    int temp = bytes[3];
+    int batt = bytes[3];
     labelCpuVal.text = [NSString stringWithFormat:@"%d%%", cpu];
     labelMemVal.text = [NSString stringWithFormat:@"%d%%", mem];
-    labelTempVal.text = [NSString stringWithFormat:@"%d℃", temp];
+    if (batt == 0xFF) {
+        labelBattVal.text = @"---%";
+    }
+    else {
+        labelBattVal.text = [NSString stringWithFormat:@"%d%%", batt];
+    }
 }
 
 - (BOOL)acceptTag:(unsigned char)tag {

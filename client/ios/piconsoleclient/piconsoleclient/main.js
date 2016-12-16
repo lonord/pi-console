@@ -274,29 +274,25 @@ function createTerminal() {
     }
 }
 
-var sendTimerId;
-var sendQueue = [];
+// var sendTimerId;
+// var sendQueue = [];
 
 function sendData(str) {
-    sendQueue.push(str);
-    if (sendTimerId) {
-        return;
-    }
-    sendTimerId = setInterval(function() {
-        if (sendQueue.length == 0) {
-            clearInterval(sendTimerId);
-            sendTimerId = undefined;
-            return;
-        }
-        term.write(sendQueue.shift());
-    }, 30);
-    // setTimeout(function() {
-    // //    try {
-    //         term.write(str);
-    // //    } catch (e) {
-    // //        console.error(e);
-    // //    }
-    // }, 5);
+    // sendQueue.push(str);
+    // if (sendTimerId) {
+    //     return;
+    // }
+    // sendTimerId = setInterval(function() {
+    //     if (sendQueue.length == 0) {
+    //         clearInterval(sendTimerId);
+    //         sendTimerId = undefined;
+    //         return;
+    //     }
+    //     term.write(sendQueue.shift());
+    // }, 30);
+    setTimeout(function() {
+        term.write(str);
+    }, 1);
 }
 
 function requestTermFit() {

@@ -1,11 +1,3 @@
-//
-//  PopAlertView.m
-//  piconsoleclient
-//
-//  Created by lonord on 2016/11/20.
-//  Copyright © 2016年 lonord. All rights reserved.
-//
-
 #import "PopView.h"
 #import "ViewUtil.h"
 
@@ -14,29 +6,32 @@
 #define MARGIN 20.0
 #define BTN_HEIGHT 60.0
 #define FONT_SIZE 16.0
-#define OK_BTN_TEXT @"确定"
+#define SHUTDOWN_BTN_TEXT @"关机"
+#define RESTART_BTN_TEXT @"重启"
 #define CANCEL_BTN_TEXT @"取消"
+#define NOTIFY_TEXT @"Pi关机选项"
 
-@implementation PopAlertView {
+@implementation PopPowerView {
     UIView* backView;
     UIView* mainView;
     UILabel* label;
     UIButton* cancelBtn;
-    UIButton* okBtn;
-    
-    void(^callback)(BOOL isOK);
+    UIButton* shutdownBtn;
+    UIButton* restartBtn;
+
+    void(^callback)(int position);
 }
 
-PopAlertView* thisPopAlertView;
+PopPowerView* thisPopPowerView;
 
-+ (void)showWithText:(NSString*)text callback:(void(^)(BOOL isOK))cb {
-    if (thisPopAlertView == nil) {
-        thisPopAlertView = [[PopAlertView alloc] init];
++ (void)showWithCallback:(void(^)(int position))cb {
+    if (thisPopPowerView == nil) {
+        thisPopPowerView = [[PopPowerView alloc] init];
     }
-    thisPopAlertView->callback = cb;
-    [thisPopAlertView calculateSize:text];
-    thisPopAlertView->label.text = text;
-    [thisPopAlertView show];
+    thisPopPowerView->callback = cb;
+    [thisPopPowerView calculateSize:NOTIFY_TEXT];
+    thisPopPowerView->label.text = NOTIFY_TEXT;
+    [thisPopPowerView show];
 }
 
 - (id)init {
@@ -46,24 +41,30 @@ PopAlertView* thisPopAlertView;
         backView.backgroundColor = [UIColor blackColor];
         backView.alpha = 0.5;
         [self addSubview:backView];
-        
+
         mainView = [[UIView alloc] init];
         mainView.backgroundColor = [UIColor whiteColor];
         mainView.layer.masksToBounds = YES;
         mainView.layer.cornerRadius = 4;
         [self addSubview:mainView];
-        
+
         label = [[UILabel alloc] init];
         label.font = [UIFont systemFontOfSize:FONT_SIZE];
         label.numberOfLines = 0;
         [mainView addSubview:label];
-        
-        okBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-        [okBtn setTitle:OK_BTN_TEXT forState:UIControlStateNormal];
-        [okBtn setTintColor:[UIColor orangeColor]];
-        [okBtn addTarget:self action:@selector(okBtnClick) forControlEvents:UIControlEventTouchUpInside];
-        [mainView addSubview:okBtn];
-        
+
+        shutdownBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+        [shutdownBtn setTitle:SHUTDOWN_BTN_TEXT forState:UIControlStateNormal];
+        [shutdownBtn setTintColor:[UIColor redColor]];
+        [shutdownBtn addTarget:self action:@selector(shutdownBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        [mainView addSubview:shutdownBtn];
+
+        restartBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+        [restartBtn setTitle:RESTART_BTN_TEXT forState:UIControlStateNormal];
+        [restartBtn setTintColor:[UIColor orangeColor]];
+        [restartBtn addTarget:self action:@selector(restartBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        [mainView addSubview:restartBtn];
+
         cancelBtn = [UIButton buttonWithType:UIButtonTypeSystem];
         [cancelBtn setTitle:CANCEL_BTN_TEXT forState:UIControlStateNormal];
         [cancelBtn setTintColor:[UIColor colorWithWhite:0.3 alpha:1]];
@@ -80,22 +81,29 @@ PopAlertView* thisPopAlertView;
     CGFloat mainViewWidth = LABEL_WIDTH + MARGIN * 2;
     CGFloat textHeight = [ViewUtil calculateHeightByConstraintWidth:LABEL_WIDTH fontSize:FONT_SIZE string:text];
     label.frame = CGRectMake(MARGIN, MARGIN, LABEL_WIDTH, textHeight);
-    CGFloat okBtnWidth = [ViewUtil calculateSizeByConstraintFontSize:[UIFont systemFontSize] string:OK_BTN_TEXT].width + MARGIN * 2;
-    okBtn.frame = CGRectMake(mainViewWidth - okBtnWidth - MARGIN, textHeight + MARGIN * 2, okBtnWidth, BTN_HEIGHT);
+    CGFloat shutdownBtnWidth = [ViewUtil calculateSizeByConstraintFontSize:[UIFont systemFontSize] string:SHUTDOWN_BTN_TEXT].width + MARGIN * 2;
+    CGFloat restartBtnWidth = [ViewUtil calculateSizeByConstraintFontSize:[UIFont systemFontSize] string:RESTART_BTN_TEXT].width + MARGIN * 2;
+    shutdownBtn.frame = CGRectMake(mainViewWidth - shutdownBtnWidth - MARGIN, textHeight + MARGIN * 2, shutdownBtnWidth, BTN_HEIGHT);
+    restartBtn.frame = CGRectMake(mainViewWidth - shutdownBtnWidth - restartBtnWidth - MARGIN, textHeight + MARGIN * 2, shutdownBtnWidth, BTN_HEIGHT);
     CGFloat cancelBtnWidth = [ViewUtil calculateSizeByConstraintFontSize:[UIFont systemFontSize] string:CANCEL_BTN_TEXT].width + MARGIN * 2;
-    cancelBtn.frame = CGRectMake(mainViewWidth - okBtnWidth - cancelBtnWidth - MARGIN, textHeight + MARGIN * 2, cancelBtnWidth, BTN_HEIGHT);
-    CGFloat mainViewHeight = okBtn.frame.origin.y + okBtn.frame.size.height;
+    cancelBtn.frame = CGRectMake(mainViewWidth - shutdownBtnWidth - restartBtnWidth - cancelBtnWidth - MARGIN, textHeight + MARGIN * 2, cancelBtnWidth, BTN_HEIGHT);
+    CGFloat mainViewHeight = shutdownBtn.frame.origin.y + shutdownBtn.frame.size.height;
     mainView.frame = CGRectMake((winSize.width - mainViewWidth) / 2, (winSize.height - mainViewHeight) / 2, mainViewWidth, mainViewHeight);
 }
 
-- (void)okBtnClick {
+- (void)shutdownBtnClick {
     [self hide];
-    callback(YES);
+    callback(0);
+}
+
+- (void)restartBtnClick {
+    [self hide];
+    callback(1);
 }
 
 - (void)cancelBtnClick {
     [self hide];
-    callback(NO);
+    callback(2);
 }
 
 - (void)show {

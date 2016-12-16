@@ -14,6 +14,14 @@ const SerialDataQueue = require('./util.js').SerialDataQueue;
 const CachePackQueue = require('./util.js').CachePackQueue;
 const BufferQueue = require('./util.js').BufferQueue;
 
+const addone = {};
+try {
+    addone.gpio = require('./addone/gpio.js');
+    console.log(`*** ADDONE gpio loaded...`);
+} catch (e) {
+    console.log(`### ADDONE gpio not found...`);
+}
+
 class BasicHandler {
     constructor(queue) {
         this._dataPackRecvHandler;
@@ -200,20 +208,20 @@ class SysInfoHandler extends BasicSubHandler {
             }
             let cpuPercent = Math.floor(cpu * 100);
 
-            let temp;
+            let batt;
             try {
-                let tempFileStr = fs.readFileSync('/sys/class/thermal/thermal_zone0/temp');
-                temp = Math.floor(parseInt(tempFileStr) / 1000);
+                let battFileStr = fs.readFileSync('/var/local/battery');
+                batt = parseInt(battFileStr);
             }
             catch (e) {
-                temp = 0xFF;
+                batt = 0xFF;
             }
 
             let buf = Buffer.allocUnsafe(4);
             buf[0] = Math.floor(cpuPercent / 256);
             buf[1] = Math.floor(cpuPercent % 256);
             buf[2] = memPercent;
-            buf[3] = temp;
+            buf[3] = batt;
             let pack = new DataPack(this._tag, buf.length, buf);
             this._sendDataPackToReceiver(pack);
             this._lastCpus = thisCpus;
@@ -284,6 +292,35 @@ class TimeHandler extends BasicSubHandler {
     }
 }
 
+class PowerHandler extends BasicSubHandler {
+    constructor() {
+        super();
+        this._tag = 0xA3;
+        console.log('*** PowerHandler loaded...');
+    }
+
+    putDataPack(dataPack) {
+        if (dataPack.len == 0 || dataPack.data.length !== dataPack.len) {
+            return;
+        }
+        let type = dataPack.data[0];
+        if (type == 1) {
+            //shutdown
+            addone.gpio && addone.gpio.resetBT();
+            child_process.exec('shutdown -h now', () => {});
+        }
+        else if (type == 2) {
+            //restart
+            addone.gpio && addone.gpio.resetBT();
+            child_process.exec('shutdown -r now', () => {});
+        }
+    }
+
+    acceptDataPackTags() {
+        return this._tag;
+    }
+}
+
 class UartHandler extends BasicHandler {
     constructor() {
         super();
@@ -316,7 +353,9 @@ class UartHandler extends BasicHandler {
             // console.log('port recv: ' + data.toString('hex'));
             // console.log('port recv: ' + data.toString());
         });
-        this._sendBTStartCmd();
+        setTimeout(function() {
+            self._sendBTStartCmd();
+        }, 1000);
     }
 
     _sendBTStartCmd() {
@@ -431,9 +470,9 @@ class UartHandler extends BasicHandler {
     }
 
     exit() {
-        this._port.write('AT+RESET\r\n');
         this._sendQueue.clearTmpFiles && this._sendQueue.clearTmpFiles();
         this._port.close();
+        addone.gpio && addone.gpio.resetBT();
     }
 }
 
@@ -443,5 +482,6 @@ module.exports = {
     PtyHandler: PtyHandler,
     SysInfoHandler: SysInfoHandler,
     TimeHandler: TimeHandler,
+    PowerHandler: PowerHandler,
     UartHandler: UartHandler
 }

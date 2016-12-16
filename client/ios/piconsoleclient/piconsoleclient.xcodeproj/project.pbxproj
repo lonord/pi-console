@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE9B43719797EE4AB5838F34 /* PowerHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9B4D7E4A1130D4485F2150 /* PowerHandler.m */; };
+		BE9B4616A32C2B60B45B3430 /* PopPowerView.m in Resources */ = {isa = PBXBuildFile; fileRef = BE9B481BBDAD5F60F30F2DB3 /* PopPowerView.m */; };
 		EE13E50D1DDD3F86007C0096 /* KeyView.m in Sources */ = {isa = PBXBuildFile; fileRef = EE13E50C1DDD3F86007C0096 /* KeyView.m */; };
 		EE13E5101DDD3FD3007C0096 /* NormalKeyView.m in Sources */ = {isa = PBXBuildFile; fileRef = EE13E50F1DDD3FD3007C0096 /* NormalKeyView.m */; };
 		EE13E5131DDD402E007C0096 /* StatusKeyView.m in Sources */ = {isa = PBXBuildFile; fileRef = EE13E5121DDD402E007C0096 /* StatusKeyView.m */; };
 		EE13E5161DDD4089007C0096 /* FullKeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = EE13E5151DDD4089007C0096 /* FullKeyboardView.m */; };
 		EE13E51D1DDD614D007C0096 /* BTPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = EE13E51C1DDD614D007C0096 /* BTPackage.m */; };
 		EE13E51F1DDDC7E3007C0096 /* PopSideView.m in Sources */ = {isa = PBXBuildFile; fileRef = EE13E51E1DDDC7E3007C0096 /* PopSideView.m */; };
+		EE15825A1E02E00A00957D27 /* PopPowerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9B481BBDAD5F60F30F2DB3 /* PopPowerView.m */; };
 		EE1870271DDC86CA009B292C /* PopNotifyView.m in Sources */ = {isa = PBXBuildFile; fileRef = EE1870261DDC86CA009B292C /* PopNotifyView.m */; };
 		EE44C2D61DDEEE3000F8AD53 /* StatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = EE44C2D51DDEEE3000F8AD53 /* StatusView.m */; };
 		EE44C2DC1DDEFF8B00F8AD53 /* SysInfoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = EE44C2DB1DDEFF8B00F8AD53 /* SysInfoItem.m */; };
@@ -37,6 +40,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BE9B481BBDAD5F60F30F2DB3 /* PopPowerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopPowerView.m; sourceTree = "<group>"; };
+		BE9B4B8C6E5370EE1E7251F1 /* PowerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerHandler.h; sourceTree = "<group>"; };
+		BE9B4D7E4A1130D4485F2150 /* PowerHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PowerHandler.m; sourceTree = "<group>"; };
 		EE13E50C1DDD3F86007C0096 /* KeyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyView.m; sourceTree = "<group>"; };
 		EE13E50F1DDD3FD3007C0096 /* NormalKeyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalKeyView.m; sourceTree = "<group>"; };
 		EE13E5121DDD402E007C0096 /* StatusKeyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusKeyView.m; sourceTree = "<group>"; };
@@ -139,6 +145,7 @@
 				EE1870261DDC86CA009B292C /* PopNotifyView.m */,
 				EE13E51E1DDDC7E3007C0096 /* PopSideView.m */,
 				EE633FA61DE1443800B93969 /* PopAlertView.m */,
+				BE9B481BBDAD5F60F30F2DB3 /* PopPowerView.m */,
 			);
 			name = PopView;
 			sourceTree = "<group>";
@@ -206,6 +213,8 @@
 			children = (
 				EE633FA31DE0A33D00B93969 /* DateHandler.h */,
 				EE633FA41DE0A33D00B93969 /* DateHandler.m */,
+				BE9B4D7E4A1130D4485F2150 /* PowerHandler.m */,
+				BE9B4B8C6E5370EE1E7251F1 /* PowerHandler.h */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -333,6 +342,7 @@
 				EE885D801DD0B018005A730C /* main.js in Resources */,
 				EE885D7B1DD0AE7E005A730C /* xterm.css in Resources */,
 				EE885D7C1DD0AE7E005A730C /* xterm.js in Resources */,
+				BE9B4616A32C2B60B45B3430 /* PopPowerView.m in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,6 +353,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE15825A1E02E00A00957D27 /* PopPowerView.m in Sources */,
 				EE13E50D1DDD3F86007C0096 /* KeyView.m in Sources */,
 				EE885D871DD0B71C005A730C /* XTermView.m in Sources */,
 				EE44C2DC1DDEFF8B00F8AD53 /* SysInfoItem.m in Sources */,
@@ -362,6 +373,7 @@
 				EE1870271DDC86CA009B292C /* PopNotifyView.m in Sources */,
 				EE8E8C581DCD7144000338C6 /* AppDelegate.m in Sources */,
 				EE8E8C551DCD7144000338C6 /* main.m in Sources */,
+				BE9B43719797EE4AB5838F34 /* PowerHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

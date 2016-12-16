@@ -131,6 +131,8 @@
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)w {
+    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"WebKitCacheModelPreferenceKey"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     jsContext = [w valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
     jsContext.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
         context.exception = exceptionValue;

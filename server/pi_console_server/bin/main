@@ -7,6 +7,7 @@ const BasicSubHandler = require('./handlers.js').BasicSubHandler;
 const PtyHandler = require('./handlers.js').PtyHandler;
 const SysInfoHandler = require('./handlers.js').SysInfoHandler;
 const TimeHandler = require('./handlers.js').TimeHandler;
+const PowerHandler = require('./handlers.js').PowerHandler;
 const UartHandler = require('./handlers.js').UartHandler;
 const DataPack = require('./util.js').DataPack;
 
@@ -15,6 +16,7 @@ const DataPack = require('./util.js').DataPack;
  */
 (() => {
     console.log('*** Pi Console Server starting...');
+    let hasExit = false;
     let uartHandler = new UartHandler();
     uartHandler.setDataPackReceiver(uartReceiver);
     uartHandler.deviceConnectListener = onBTDeviceConnect;
@@ -28,6 +30,7 @@ const DataPack = require('./util.js').DataPack;
     }
     subHandlers.push(new SysInfoHandler());
     subHandlers.push(new TimeHandler());
+    subHandlers.push(new PowerHandler());
     // ****** Handlers end *****
 
     subHandlers.forEach((handler) => {
@@ -36,6 +39,7 @@ const DataPack = require('./util.js').DataPack;
 
     process.on('SIGINT', processExit);
     process.on('SIGTERM', processExit);
+    process.on('exit', onProcessExit);
 
     function uartReceiver(data) {
         subHandlers.forEach((handler) => {
@@ -85,8 +89,15 @@ const DataPack = require('./util.js').DataPack;
         });
         console.log('*** Pi Console Server is going to exit...');
         setTimeout(function() {
+            hasExit = true;
             process.exit(0);
         }, 500);
+    }
+
+    function onProcessExit() {
+        if (!hasExit) {
+            processExit();
+        }
     }
 
 })();

@@ -14,6 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "pty.js": "*",
-    "serialport": "4.0.3"
+    "serialport": "4.0.3",
+    "wiring-pi": "*"
   }
 }

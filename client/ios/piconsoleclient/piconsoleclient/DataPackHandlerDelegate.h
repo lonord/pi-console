@@ -13,9 +13,9 @@
 
 - (BOOL)acceptTag:(unsigned char)tag;
 
-- (void)putData:(unsigned char)tag data:(NSData*)data;
-
 @optional
+
+- (void)putData:(unsigned char)tag data:(NSData*)data;
 
 - (void)setDataCallback:(void(^)(unsigned char tag, NSData* data))cb;
 
